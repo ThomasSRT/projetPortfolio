@@ -62,7 +62,7 @@ export const PROJECTS: Project[] = [
     desc: "Création d'une charte graphique pour une sous-marque de Montagem, pour de nouveaux produits.",
     tag: 'Identité visuelle',
     media: { type: 'img', src: "/img/Capture d'écran 2026-04-02 150240.png" },
-    link: { href: '/img/charte graphique.pdf', label: 'Ouvrir le PDF' },
+    link: { href: '/img/charte-graphique.pdf', label: 'Ouvrir le PDF' },
   },
   {
     title: 'Jeu vidéo créé en moins de 2 jours (1er)',
