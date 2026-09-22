@@ -1,0 +1,29 @@
+---
+import { SKILL_GROUPS } from '../data/skills';
+---
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="section-tag">Compétences</span>
+        <h2>Des outils, un métier.</h2>
+      </div>
+      <p>Une palette complète pour passer de l'idée au visuel fini, sur tous les formats.</p>
+    </div>
+    <div class="skills-groups">
+      {SKILL_GROUPS.map((group, gi) => (
+        <div class="skills-group reveal" style={`--i:${gi}`}>
+          <h3>{group.title}</h3>
+          <div class="skill-list">
+            {group.skills.map((skill) => (
+              <div class="skill-row">
+                <span>{skill.name}</span>
+                <small>{skill.note}</small>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

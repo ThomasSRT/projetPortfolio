@@ -1,0 +1,56 @@
+---
+import { PROJECTS } from '../data/projects';
+import ProjectCard from './ProjectCard.astro';
+
+const tags = ['Tous', ...new Set(PROJECTS.map((p) => p.tag))];
+---
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="section-tag">Sélection</span>
+        <h2>Projets récents.</h2>
+      </div>
+      <p>Identité visuelle, réseaux sociaux, motion design et web — cliquez sur un projet pour le découvrir en détail.</p>
+    </div>
+    <div class="filters" id="filters">
+      {tags.map((tag) => (
+        <button class={`filter-btn${tag === 'Tous' ? ' active' : ''}`} data-tag={tag}>{tag}</button>
+      ))}
+    </div>
+    <div class="projects" id="projectsGrid">
+      {PROJECTS.map((project, i) => (
+        <ProjectCard project={project} index={i} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Hide broken media (missing assets) so the gradient placeholder shows through.
+  document.querySelectorAll<HTMLImageElement | HTMLVideoElement>('.project-media-el').forEach((el) => {
+    el.addEventListener('error', () => el.remove());
+  });
+
+  // Category filters.
+  const filters = document.getElementById('filters')!;
+  filters.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filters.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tag = btn.dataset.tag;
+      document.querySelectorAll<HTMLElement>('.project').forEach((card) => {
+        const match = tag === 'Tous' || card.dataset.tag === tag;
+        card.classList.toggle('hidden-by-filter', !match);
+      });
+    });
+  });
+
+  // Open the shared modal on card click.
+  document.querySelectorAll<HTMLElement>('.project').forEach((card) => {
+    card.addEventListener('click', () => {
+      const index = Number(card.dataset.index);
+      window.dispatchEvent(new CustomEvent('open-project-modal', { detail: { index } }));
+    });
+  });
+</script>

@@ -1,0 +1,56 @@
+---
+const links = [
+  { href: '#about', label: 'À propos' },
+  { href: '#skills', label: 'Compétences' },
+  { href: '#projects', label: 'Projets' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+<nav id="siteNav">
+  <a href="#top" class="logo">TS<span>.</span></a>
+  <div class="nav-links" id="navLinks">
+    {links.map((link) => (
+      <a href={link.href} class="nav-link">{link.label}</a>
+    ))}
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<script>
+  const siteNav = document.getElementById('siteNav')!;
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+  const navLinksWrap = document.getElementById('navLinks')!;
+  const navToggle = document.getElementById('navToggle')!;
+  const sections = document.querySelectorAll<HTMLElement>('section[id]');
+
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('open');
+    navLinksWrap.classList.toggle('open');
+  });
+  navLinksWrap.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      navToggle.classList.remove('open');
+      navLinksWrap.classList.remove('open');
+    })
+  );
+
+  function updateActiveLink() {
+    const scrollPosition = window.scrollY + window.innerHeight / 3;
+    sections.forEach((section) => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      const id = section.getAttribute('id');
+      if (scrollPosition >= top && scrollPosition < top + height) {
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+    siteNav.classList.toggle('scrolled', window.scrollY > 20);
+  }
+
+  window.addEventListener('scroll', updateActiveLink, { passive: true });
+  updateActiveLink();
+</script>

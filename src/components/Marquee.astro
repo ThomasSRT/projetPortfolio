@@ -1,0 +1,16 @@
+---
+const words = [
+  'Design graphique',
+  'Direction artistique',
+  'UI / UX',
+  'Motion design',
+  'Web design',
+  'Identité visuelle',
+];
+const looped = [...words, ...words];
+---
+<div class="marquee">
+  <div class="marquee-track">
+    {looped.map((word) => <span>{word}</span>)}
+  </div>
+</div>

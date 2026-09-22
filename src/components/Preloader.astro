@@ -1,0 +1,23 @@
+<div class="preloader" id="preloader">
+  <span class="preloader-mark">Thomas Serrurot</span>
+  <span class="preloader-count" id="preloaderCount">0</span>
+  <div class="preloader-bar"><span id="preloaderBar"></span></div>
+</div>
+
+<script>
+  const preloader = document.getElementById('preloader')!;
+  const preloaderCount = document.getElementById('preloaderCount')!;
+  const preloaderBar = document.getElementById('preloaderBar')! as HTMLElement;
+  let progress = 0;
+
+  const progressTimer = setInterval(() => {
+    progress += Math.random() * 18 + 6;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(progressTimer);
+      setTimeout(() => preloader.classList.add('hidden'), 250);
+    }
+    preloaderCount.textContent = String(Math.floor(progress));
+    preloaderBar.style.width = progress + '%';
+  }, 140);
+</script>

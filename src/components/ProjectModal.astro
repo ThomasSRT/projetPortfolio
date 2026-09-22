@@ -1,0 +1,113 @@
+<div id="projectModal" class="modal">
+  <div class="modal-content">
+    <button class="close-modal" id="closeModal" aria-label="Fermer">&times;</button>
+    <div id="modalMediaContainer"></div>
+    <div class="modal-text">
+      <span class="section-tag" id="modalTag"></span>
+      <h3 id="modalTitle"></h3>
+      <p id="modalDescription"></p>
+      <a id="modalLink" class="project-link" style="display:none;" target="_blank" rel="noopener"></a>
+    </div>
+    <div class="modal-nav">
+      <button id="modalPrev">← Projet précédent</button>
+      <button id="modalNext">Projet suivant →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { PROJECTS } from '../data/projects';
+
+  function hueFromString(str: string) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return Math.abs(hash) % 360;
+  }
+
+  function buildPlaceholder(project: (typeof PROJECTS)[number]) {
+    const hue = hueFromString(project.title);
+    const el = document.createElement('div');
+    el.className = 'project-placeholder';
+    el.style.position = 'absolute';
+    el.style.inset = '0';
+    el.style.background = `linear-gradient(135deg, hsl(${hue} 55% 14%), hsl(${(hue + 40) % 360} 55% 9%))`;
+    const isVideo = project.media.type === 'video';
+    el.innerHTML = `
+      ${isVideo
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 10l4.55-2.28A1 1 0 0121 8.62v6.76a1 1 0 01-1.45.9L15 14M4 6h9a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>'}
+      <b>${project.title}</b>
+      <small>Visuel à ajouter dans /public/img</small>`;
+    return el;
+  }
+
+  const modal = document.getElementById('projectModal')!;
+  const modalMedia = document.getElementById('modalMediaContainer')!;
+  const modalTitle = document.getElementById('modalTitle')!;
+  const modalTag = document.getElementById('modalTag')!;
+  const modalDesc = document.getElementById('modalDescription')!;
+  const modalLink = document.getElementById('modalLink') as HTMLAnchorElement;
+  let currentProjectIndex = 0;
+
+  function openModal(index: number) {
+    currentProjectIndex = (index + PROJECTS.length) % PROJECTS.length;
+    const project = PROJECTS[currentProjectIndex];
+
+    modalMedia.innerHTML = '';
+    modalMedia.appendChild(buildPlaceholder(project));
+
+    let el: HTMLImageElement | HTMLVideoElement;
+    if (project.media.type === 'video') {
+      el = document.createElement('video');
+      el.src = project.media.src;
+      el.autoplay = true;
+      el.loop = true;
+      el.muted = true;
+      el.controls = true;
+      el.playsInline = true;
+    } else {
+      el = document.createElement('img');
+      el.src = project.media.src;
+      el.alt = project.title;
+    }
+    el.style.position = 'relative';
+    el.addEventListener('error', () => el.remove());
+    modalMedia.appendChild(el);
+
+    modalTag.textContent = project.tag;
+    modalTitle.textContent = project.title;
+    modalDesc.textContent = project.desc;
+
+    if (project.link) {
+      modalLink.href = project.link.href;
+      modalLink.textContent = project.link.label + ' →';
+      modalLink.style.display = 'inline-flex';
+    } else {
+      modalLink.style.display = 'none';
+    }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModalFn() {
+    modal.classList.remove('open');
+    document.body.style.overflow = 'auto';
+    modalMedia.innerHTML = '';
+  }
+
+  window.addEventListener('open-project-modal', ((e: CustomEvent<{ index: number }>) => {
+    openModal(e.detail.index);
+  }) as EventListener);
+
+  document.getElementById('closeModal')!.addEventListener('click', closeModalFn);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModalFn(); });
+  document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('open')) return;
+    if (e.key === 'Escape') closeModalFn();
+    if (e.key === 'ArrowRight') openModal(currentProjectIndex + 1);
+    if (e.key === 'ArrowLeft') openModal(currentProjectIndex - 1);
+  });
+  document.getElementById('modalPrev')!.addEventListener('click', () => openModal(currentProjectIndex - 1));
+  document.getElementById('modalNext')!.addEventListener('click', () => openModal(currentProjectIndex + 1));
+</script>

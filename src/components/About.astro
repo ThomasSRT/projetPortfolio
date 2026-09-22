@@ -1,0 +1,30 @@
+---
+import { PROJECTS } from '../data/projects';
+import { SKILL_GROUPS } from '../data/skills';
+
+const skillCount = SKILL_GROUPS.reduce((sum, g) => sum + g.skills.length, 0);
+---
+<section id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="section-tag">À propos</span>
+        <h2>Le design comme<br />langage.</h2>
+      </div>
+    </div>
+    <div class="about-grid">
+      <p class="reveal">
+        Passionné par la création visuelle, je conçois des identités, des animations et des interfaces
+        qui savent capter l'attention. Entre <strong>direction artistique</strong>,
+        <strong>motion design</strong> et <strong>web design</strong>, chaque projet est pensé pour
+        raconter une histoire claire et mémorable.
+      </p>
+      <div class="stats reveal">
+        <div class="stat"><b>{PROJECTS.length}</b><span>Projets réalisés</span></div>
+        <div class="stat"><b>{skillCount}</b><span>Compétences maîtrisées</span></div>
+        <div class="stat"><b>1er</b><span>Place — Hackathon MANU</span></div>
+        <div class="stat"><b>100%</b><span>Sur-mesure</span></div>
+      </div>
+    </div>
+  </div>
+</section>
